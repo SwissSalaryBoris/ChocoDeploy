@@ -1,21 +1,24 @@
 # Install-Module ChocoDeploy -Scope AllUsers
-# Install-Module PSIntuneAuth -Scope AllUsers
-# Install-Module AzureAd -Scope AllUsers
-# Install-Module intunewin32app -Scope AllUsers
+# Install-Module PSIntuneAuth -Scope CurrentUser
+# Install-Module AzureAd -Scope CurrentUser
+# Install-Module intunewin32app -Scope CurrentUser
 
 Set-Location $PSScriptRoot
 
+Import-Module AzureAd
 Import-Module ..\ChocoDeploy
 
-$chocoApp = 'googlechrome'
+$chocoApp = 'pdf24'
 
-$workingFolder = 'C:\tmp\sws-choco-apps'
+$workingFolder = 'D:\BENUTZER\BOST\tmp\sws-choco-apps'
 $tenantName = 'swisssalary.ch'
+
+Connect-MSIntuneGraph -TenantName $tenantName -PromptBehavior RefreshSession
 
 Get-ChocoInfo -PackageName $chocoApp -OutputPath $workingFolder
 
 # Chocolatey Installer
-#New-ChocoClientApp -IntuneWinAppExePath .\IntuneWinAppUtil.exe -Win32AppPath $workingFolder -TenantName $tenantName
+#New-ChocoClientApp -IntuneWinAppExePath ..\lib\IntuneWinAppUtil.exe -Win32AppPath $workingFolder -TenantName $tenantName
 
-# App 
-New-ChocoApp -JsonFile "$($workingFolder)\$($chocoApp).json" -IntuneWinAppExePath .\IntuneWinAppUtil.exe -TenantName $tenantName -Verbose -Win32AppPath $workingFolder
+# App
+New-ChocoApp -JsonFile "$($workingFolder)\$($chocoApp).json" -IntuneWinAppExePath ..\lib\IntuneWinAppUtil.exe -TenantName $tenantName -Win32AppPath $workingFolder
